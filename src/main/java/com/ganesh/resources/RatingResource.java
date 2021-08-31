@@ -7,9 +7,9 @@ import com.ganesh.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/ratings")
 public class RatingResource {
 
@@ -38,6 +38,13 @@ public class RatingResource {
         return ratingService.getRatingById(id);
     }
 
+    @GetMapping(path = "/movies/average/{id}", produces = "Application/json")
+    public Integer getAverageRatingByMovieId(@PathVariable("id") int id) {
+        Integer averageRating = ratingService.getAverageRatingByMovieId(id);
+        if(averageRating!=null) return averageRating;
+        return 0;
+    }
+
     @RequestMapping(method = RequestMethod.POST, produces = "Application/json", consumes = "Application/json")
     Rating saveRating(@RequestBody Rating rating ) {
         return ratingService.insertRating(rating);
@@ -52,6 +59,12 @@ public class RatingResource {
     @GetMapping(path = "/users/{id}",produces = "Application/json")
     RatingList getRatingByUserId(@PathVariable("id") int id) {
         return ratingService.getRatingByUserId(id);
+    }
+
+
+    @GetMapping(path = "/movies/{id}",produces = "Application/json")
+    RatingList getRatingByMovieId(@PathVariable("id") int id) {
+        return ratingService.getRatingByMovieId(id);
     }
 
 

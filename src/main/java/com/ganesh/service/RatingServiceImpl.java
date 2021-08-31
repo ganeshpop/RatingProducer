@@ -6,8 +6,6 @@ import com.ganesh.persistence.RatingDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -25,6 +23,10 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Rating insertRating(Rating rating) {
+        if (ratingDao.getRatingByUserIdAndMovieId(rating.getUserId(), rating.getMovieId()) != null) {
+            ratingDao.updateRatingWithUserIdAndMovieId(rating.getUserId(), rating.getRating(), rating.getMovieId());
+            return ratingDao.getRatingByUserIdAndMovieId(rating.getUserId(), rating.getMovieId());
+        }
         return ratingDao.save(rating);
     }
 
@@ -41,14 +43,29 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
+    public Integer getAverageRatingByMovieId(int id) {
+        Integer rating = ratingDao.getAverageRatingByMovieId(id);
+        System.out.println(rating);
+        return rating;
+    }
+
+    @Override
     public Rating updateRating(int id, int rating) {
-        int rows = ratingDao.updateRating(id,rating);
-        if(rows > 0) return ratingDao.getById(id);
+        int rows = ratingDao.updateRating(id, rating);
+        if (rows > 0) return ratingDao.getById(id);
         return null;
     }
+
 
     @Override
     public RatingList getRatingByUserId(int id) {
         return new RatingList(ratingDao.getRatingByUserId(id));
     }
+
+    @Override
+    public RatingList getRatingByMovieId(int id) {
+        return new RatingList((ratingDao.getRatingByMovieId(id)));
+    }
+
+
 }
